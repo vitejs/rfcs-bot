@@ -11,10 +11,10 @@ function createOctokit(installationId: number | string) {
   return new Octokit({
     authStrategy: createAppAuth,
     auth: {
-      appId: process.env.UPISSUES_APP_ID,
-      privateKey: Buffer.from(process.env.UPISSUES_PRIVATE_KEY!, 'base64').toString('ascii'),
-      clientId: process.env.UPISSUES_CLIENT_ID,
-      clientSecret: process.env.UPISSUES_CLIENT_SECRET,
+      appId: process.env.BOT_APP_ID,
+      privateKey: Buffer.from(process.env.BOT_PRIVATE_KEY!, 'base64').toString('ascii'),
+      clientId: process.env.BOT_CLIENT_ID,
+      clientSecret: process.env.BOT_CLIENT_SECRET,
       installationId: +installationId,
     },
   })
