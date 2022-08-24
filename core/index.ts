@@ -3,19 +3,22 @@ import { info } from './utils'
 export * from './types'
 
 const RFC_CAT_ID = 'DIC_kwDOHz3x484CQ_Jh'
+const ALLOWED_REPO = ['vite/rfcs']
 
 export async function runAction(context: Context) {
   const { octokit, event } = context
 
-  info({ event })
-
   if (!('pull_request' in event && event.action === 'opened'))
     return
+  if (!ALLOWED_REPO.includes(event.repository.full_name))
+    return
+
+  info({ event })
 
   const { pull_request } = event
 
   const files_url = `${pull_request.url}/files`
-  const diff = await octokit.request(files_url) as any
+  const diff = (await octokit.request(files_url)) as any
   const addedFiles = (diff.data as { status: string; filename: string }[]).filter(i => i.status === 'added')
   const rfcFile = addedFiles.find(i => i.filename.startsWith('rfcs/') && i.filename.endsWith('.md'))
 
@@ -56,7 +59,7 @@ mutation {
     }
   }
 }`
-    const result = await octokit.graphql(query) as any
+    const result = (await octokit.graphql(query)) as any
     discussionUrl = result.createDiscussion.discussion.url
     info(`Discussion created ${discussionUrl}`)
   }
@@ -68,13 +71,13 @@ mutation {
     body: [
       'This is an [RFC](https://github.com/vitejs/rfcs) pull request. To participate in the process, please read thoroughly about the proposal and provide feedback in the discussion thread with the link below.',
       '',
-                `[📖 Full Rendered Proposal](${renderedUrl})`,
-                '',
-                `[💬 Discussion Thread](${discussionUrl})`,
-                '<br>',
-                '',
-                '> **Note**',
-                '> **Do NOT comment on this PR. Please use the discussion thread linked above to provide feedback, as it provides branched discussions that are easier to follow. This also makes the edit history of the PR clearer.**',
+      `[📖 Full Rendered Proposal](${renderedUrl})`,
+      '',
+      `[💬 Discussion Thread](${discussionUrl})`,
+      '<br>',
+      '',
+      '> **Note**',
+      '> **Do NOT comment on this PR. Please use the discussion thread linked above to provide feedback, as it provides branched discussions that are easier to follow. This also makes the edit history of the PR clearer.**',
     ].join('\n'),
   })
 }
