@@ -3,17 +3,17 @@ import { info } from './utils'
 export * from './types'
 
 const RFC_CAT_ID = 'DIC_kwDOHz3x484CQ_Jh'
-const ALLOWED_REPO = ['vite/rfcs']
+const ALLOWED_REPO = ['vitejs/rfcs']
 
 export async function runAction(context: Context) {
   const { octokit, event } = context
 
-  if (!('pull_request' in event && event.action === 'opened'))
+  info({ event })
+
+  if (!('pull_request' in event && (event.action === 'opened' || event.action === 'reopened')))
     return
   if (!ALLOWED_REPO.includes(event.repository.full_name))
     return
-
-  info({ event })
 
   const { pull_request } = event
 
