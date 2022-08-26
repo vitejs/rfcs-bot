@@ -8,12 +8,12 @@ const ALLOWED_REPO = ['vitejs/rfcs']
 export async function runAction(context: Context) {
   const { octokit, event } = context
 
-  info({ event })
-
-  if (!('pull_request' in event && (event.action === 'opened' || event.action === 'reopened')))
+  if (!('pull_request' in event && event.action === 'opened'))
     return
   if (!ALLOWED_REPO.includes(event.repository.full_name))
     return
+
+  info({ event })
 
   const { pull_request } = event
 
